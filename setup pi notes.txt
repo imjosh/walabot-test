@@ -1,8 +1,33 @@
-curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-sudo apt-get install -y nodejs git python-pip
+#!/bin/sh
+## Install script for proof-of-concept Walabot Alarm Clock
 
-# install walabot 1.1.6 (beta)
+# walabot 1.1.6 (beta) - can't get it to detect targets, use non-beta version
 # you must accept the eula (tab-enter, enter)
-curl -L https://walabot.com/WalabotInstaller/Latest/walabot_maker_1.1.6.deb -o walabot_maker_1.1.6.deb
-sudo apt install -y ./walabot_maker_1.1.6.deb
+# curl -L https://walabot.com/WalabotInstaller/Latest/walabot_maker_1.1.6.deb -o walabot_maker_1.1.6.deb
+# sudo apt install -y ./walabot_maker_1.1.6.deb
+# pip install WalabotAPI --no-index --find-links="/usr/share/walabot/python/"
+
+# walabot-maker 1.0.34
+# you must accept the eula (tab-enter, enter)
+curl -L https://walabot.com/WalabotInstaller/Latest/walabot_maker_1.0.34_raspberry_arm32.deb -o walabot_maker_1.0.34.deb
+sudo apt install -y ./walabot_maker_1.0.34.deb
 pip install WalabotAPI --no-index --find-links="/usr/share/walabot/python/"
+
+# node
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# rabbitMQ
+curl -s https://packagecloud.io/install/repositories/rabbitmq/rabbitmq-server/script.deb.sh | sudo bash
+sudo apt-get install -y rabbitmq-server
+
+# pip
+sudo apt-get install -y python-pip
+
+# RabbitMQ Python client
+pip install pika
+
+# update rabbitMQ settings
+sudo rabbitmqctl add_user pi raspberry
+sudo rabbitmqctl set_permissions -p / pi ".*" ".*" ".*"
+rabbitmqctl set_policy my-pol "hello" '{"max-length":1}' --apply-to queues
